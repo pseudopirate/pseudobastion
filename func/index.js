@@ -2,7 +2,7 @@
 const { Telegraf } = require('telegraf')
 const _ = require('lodash')
 const AWS = require('aws-sdk')
-const {getChatId, prepareBdaysReply } = require('./utils')
+const { getChatId, prepareBdaysReply } = require('./utils')
 
 AWS.config.update({
     region: process.env.AWS_REGION,
