@@ -5,7 +5,7 @@ const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 
 
 const prepareBdaysReply = (bdays, prefix) => {
     return '#birthdays\n' + prefix + '\n' + bdays.map((item) =>
-        `${_.padStart(item.day, 2, '0')} ${months[item.month - 1]} - <b>${item.name}</b>`).join('\n')
+        `${_.padStart(item.day, 2, '0')} ${months[item.month]} - <b>${item.name}</b>`).join('\n')
 }
 
 module.exports = {

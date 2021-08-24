@@ -13,22 +13,31 @@ const bot = new Telegraf(TOKEN)
 
 exports.handler = async (event) => {
     const client = new AWS.DynamoDB.DocumentClient()
+    const currentMonth = new Date().getMonth()
     const params = {
         TableName: 'birthdays',
-        KeyConditionExpression: 'chat_id = :cid',
-        ExpressionAttributeValues: {
-            ':cid': Number(process.env.CHAT_ID)
-        }
+        FilterExpression: 'month = :month',
+        ExpressionAttributeValues: { ':month': currentMonth }
+
     }
 
-    const { Items } = await client.query(params).promise()
+    const { Items } = await client.scan(params).promise()
     const bdays = _.orderBy(Items, ['month', 'day'])
-    const currentMonth = new Date().getMonth()
-    const preparedBDays = bdays
-        .filter((item) => item.month - 1 === currentMonth)
 
-    if (preparedBDays.length > 0) {
-        await bot.telegram.sendMessage(process.env.CHAT_ID, prepareBdaysReply(preparedBDays, 'There are some dbays in this month'), { parse_mode: 'HTML' })
+    const group = _.groupBy(bdays, 'chat_id')
+    const ids = Object.keys(group)
+
+    for (let i = 0; i < ids.length; i++) {
+        const chatId = ids[i]
+        const chatBDays = group[chatId]
+
+        if (chatBDays.length > 0) {
+            await bot.telegram.sendMessage(
+                chatId,
+                prepareBdaysReply(chatBDays, 'There are some dbays in this month'),
+                { parse_mode: 'HTML' }
+            )
+        }
     }
 
     return { statusCode: 200 }
