@@ -1,6 +1,6 @@
 const { Telegraf } = require('telegraf')
 const AWS = require('aws-sdk')
-const { prepareBdaysReply } = require('./utils')
+const { prepareBdaysReply, getDayDiff, pad } = require('./utils')
 const _ = require('lodash')
 
 AWS.config.update({
@@ -13,16 +13,22 @@ const bot = new Telegraf(TOKEN)
 
 exports.handler = async (event) => {
     const client = new AWS.DynamoDB.DocumentClient()
-    const currentMonth = new Date().getMonth()
+    const date = new Date()
+    const currentDate = new Date(`${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T00:00:00Z`)
     const params = {
-        TableName: 'birthdays',
-        FilterExpression: 'month = :month',
-        ExpressionAttributeValues: { ':month': currentMonth }
-
+        TableName: 'birthdays'
     }
 
     const { Items } = await client.scan(params).promise()
     const bdays = _.orderBy(Items, ['month', 'day'])
+        .map((bday) => {
+            const bdayDate = new Date(`${currentDate.getFullYear()}-${pad(bday.month)}-${pad(bday.day)}T00:00:00Z`)
+            return {
+                ...bday,
+                diff: getDayDiff(currentDate, bdayDate)
+            }
+        })
+        .filter(({ diff }) => diff >= 0 && diff < 7)
 
     const group = _.groupBy(bdays, 'chat_id')
     const ids = Object.keys(group)
@@ -34,7 +40,7 @@ exports.handler = async (event) => {
         if (chatBDays.length > 0) {
             await bot.telegram.sendMessage(
                 chatId,
-                prepareBdaysReply(chatBDays, 'There are some birthdays in this month'),
+                prepareBdaysReply(chatBDays, 'Hey the are a some birthdays on this week'),
                 { parse_mode: 'HTML' }
             )
         }
