@@ -13,7 +13,7 @@ const bot = new Telegraf(TOKEN)
 
 exports.handler = async (event) => {
     const client = new AWS.DynamoDB.DocumentClient()
-    const currentMonth = new Date().getMonth()
+    const currentMonth = new Date().getMonth() + 1
     const currentDay = new Date().getDate()
     const params = {
         TableName: 'birthdays',
