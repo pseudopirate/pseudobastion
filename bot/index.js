@@ -1,5 +1,5 @@
 
-require('dotenv').config()
+// require('dotenv').config()
 const { Telegraf, session, Scenes } = require('telegraf')
 const AWS = require('aws-sdk')
 const { telegrafThrottler } = require('telegraf-throttler')
