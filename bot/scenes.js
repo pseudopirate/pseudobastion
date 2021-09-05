@@ -54,7 +54,7 @@ const bdaysScene = new Scenes.WizardScene(SCENE_IDS.BDAY_ADD,
             return
         }
 
-        ctx.wizard.state.bdayData.day = ctx.message.text
+        ctx.wizard.state.bdayData.day = Number(ctx.message.text)
 
         const data = ctx.wizard.state.bdayData
         try {
