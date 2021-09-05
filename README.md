@@ -11,3 +11,4 @@ Telegram bot birthday reminder and personal assistant in some future
 - [ ] Bot api delete bday
 - [ ] Bot api update bday
 - [ ] Bot menu with inline buttons and all available commands
+- [ ] Typescript

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src",
     "lint": "eslint . --fix",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -25,13 +26,16 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
-    "husky": "^6.0.0",
+    "husky": "^7.0.0",
     "jest": "^27.1.0",
     "lint-staged": "^11.0.0"
   },
   "husky": {
     "hooks": {
-      "pre-commit": ["lint-staged", "jest"]
+      "pre-commit": [
+        "lint-staged",
+        "jest"
+      ]
     }
   },
   "lint-staged": {
