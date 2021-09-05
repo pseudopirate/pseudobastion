@@ -1,4 +1,4 @@
-const { pad, prepareBdaysReply, getDayDiff } = require('../func/utils')
+const { pad, prepareBdaysReply, getDayDiff } = require('../utils')
 
 describe('utils cases:', () => {
     describe('pad: (str: string) => string', () => {

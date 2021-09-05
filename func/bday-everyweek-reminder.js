@@ -1,6 +1,6 @@
 const { Telegraf } = require('telegraf')
 const AWS = require('aws-sdk')
-const { prepareBdaysReply, getDayDiff, pad } = require('./utils')
+const { prepareBdaysReply, getDayDiff, pad } = require('../utils')
 const _ = require('lodash')
 
 AWS.config.update({
