@@ -53,8 +53,7 @@ const initBastionCommands = (bot, AWS) => {
         const { Items } = await client.query(params).promise()
         const bdays = _.orderBy(Items, ['month', 'day'])
 
-        await ctx.reply(prepareBdaysReply(bdays), { parse_mode: 'HTML' })
-        return ctx.answerCbQuery()
+        return ctx.editMessageText(prepareBdaysReply(bdays), { parse_mode: 'HTML' })
     })
 
     bot.action(BDAYS_ACTIONS.Add, (ctx) => {

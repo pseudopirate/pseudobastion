@@ -6,7 +6,7 @@ const { SCENE_IDS } = require('../consts')
 
 const bdaysScene = new Scenes.WizardScene(SCENE_IDS.BDAY_ADD,
     (ctx) => {
-        ctx.reply('Enter name')
+        ctx.editMessageText('Enter name')
         ctx.wizard.state.bdayData = {}
         return ctx.wizard.next()
     },

@@ -13,4 +13,4 @@ Telegram bot birthday reminder and personal assistant in some future
 - [x] Bot menu with inline buttons and all available commands
 - [ ] Typescript
 - [ ] Inline keyboard for months
-- [ ] Reply with `editMessageText` after inline actions
+- [x] Reply with `editMessageText` after inline actions
