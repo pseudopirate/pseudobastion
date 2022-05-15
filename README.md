@@ -9,6 +9,7 @@ Telegram bot birthday reminder and personal assistant in some future
 - [ ] Bot api delete bday
 - [ ] Bot api update bday
 - [x] Bot menu with inline buttons and all available commands
-- [ ] Typescript
+- [x] Typescript
 - [ ] Inline keyboard for months
 - [x] Reply with `editMessageText` after inline actions
+- [ ] Get rid of cloud function. Use crontab inside container instead
