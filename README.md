@@ -13,3 +13,4 @@ Telegram bot birthday reminder and personal assistant in some future
 - [ ] Inline keyboard for months
 - [x] Reply with `editMessageText` after inline actions
 - [ ] Get rid of cloud functions. Use crontab inside container instead
+- [ ] Extract repeated code in cron functions

@@ -26,6 +26,7 @@
     "@types/jest": "^27.5.1",
     "@types/lodash": "^4.14.182",
     "@types/node": "^17.0.33",
+    "@types/node-cron": "^3.0.1",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
     "@yandex-cloud/tsconfig": "^1.0.0",
@@ -57,6 +58,7 @@
     "aws-sdk": "^2.973.0",
     "dotenv": "^10.0.0",
     "lodash": "^4.17.21",
+    "node-cron": "^3.0.0",
     "telegraf": "^4.4.1",
     "telegraf-throttler": "^0.6.0"
   }

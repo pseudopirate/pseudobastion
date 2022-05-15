@@ -1,17 +1,16 @@
-const { Telegraf } = require('telegraf');
-const AWS = require('aws-sdk');
-const _ = require('lodash');
-const { prepareBdaysReply } = require('../utils');
+import AWS from 'aws-sdk';
+import _ from 'lodash';
+import { bot } from '../bot';
+import { BDay } from '../models';
+import { prepareBdaysReply } from '../utils';
 
 AWS.config.update({
     region: process.env.AWS_REGION,
+    // @ts-ignore
     endpoint: process.env.DB_ENDPOINT,
 });
 
-const TOKEN = process.env.TELEGRAM_TOKEN;
-const bot = new Telegraf(TOKEN);
-
-exports.handler = async () => {
+const everyday = async () => {
     const client = new AWS.DynamoDB.DocumentClient();
     const currentMonth = new Date().getMonth() + 1;
     const currentDay = new Date().getDate();
@@ -22,24 +21,26 @@ exports.handler = async () => {
     };
 
     const { Items } = await client.scan(params).promise();
-    const bdays = _.orderBy(Items, ['month', 'day']);
+    const bdays = _.orderBy(Items as BDay[], ['month', 'day']);
 
     const group = _.groupBy(bdays, 'chat_id');
     const ids = Object.keys(group);
 
-    for (let i = 0; i < ids.length; i++) {
-        const chatId = ids[i];
+    const promises = ids.map((chatId) => {
         const chatBDays = group[chatId];
 
         if (chatBDays.length > 0) {
-            // eslint-disable-next-line no-await-in-loop
-            await bot.telegram.sendMessage(
+            return bot.telegram.sendMessage(
                 chatId,
                 prepareBdaysReply(chatBDays, "Hey, someone has birthday today! Don't forget to wish him happy birthday"),
                 { parse_mode: 'HTML' },
             );
         }
-    }
 
-    return { statusCode: 200 };
+        return Promise.resolve();
+    });
+
+    return Promise.all(promises);
 };
+
+export default everyday;

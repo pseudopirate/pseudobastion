@@ -1,28 +1,31 @@
-const { Telegraf } = require('telegraf');
-const AWS = require('aws-sdk');
-const _ = require('lodash');
-const { prepareBdaysReply, getDayDiff, pad } = require('../utils');
+import AWS from 'aws-sdk';
+
+import _ from 'lodash';
+import { bot } from '../bot';
+import { BDay } from '../models';
+import { prepareBdaysReply, getDayDiff, pad } from '../utils';
 
 AWS.config.update({
     region: process.env.AWS_REGION,
+    // @ts-ignore
     endpoint: process.env.DB_ENDPOINT,
 });
 
-const TOKEN = process.env.TELEGRAM_TOKEN;
-const bot = new Telegraf(TOKEN);
-
-exports.handler = async () => {
+const everyweek = async () => {
     const client = new AWS.DynamoDB.DocumentClient();
     const date = new Date();
-    const currentDate = new Date(`${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T00:00:00Z`);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const currentDate = new Date(`${date.getFullYear()}-${pad(month.toString())}-${pad(day.toString())}T00:00:00Z`);
     const params = {
         TableName: 'birthdays',
     };
 
     const { Items } = await client.scan(params).promise();
-    const bdays = _.orderBy(Items, ['month', 'day'])
+    const bdays = _.orderBy(Items as BDay[], ['month', 'day'])
         .map((bday) => {
-            const bdayDate = new Date(`${currentDate.getFullYear()}-${pad(bday.month)}-${pad(bday.day)}T00:00:00Z`);
+            const dateStr = `${currentDate.getFullYear()}-${pad(bday.month.toString())}-${pad(bday.day.toString())}T00:00:00Z`;
+            const bdayDate = new Date(dateStr);
             return {
                 ...bday,
                 diff: getDayDiff(currentDate, bdayDate),
@@ -33,19 +36,19 @@ exports.handler = async () => {
     const group = _.groupBy(bdays, 'chat_id');
     const ids = Object.keys(group);
 
-    for (let i = 0; i < ids.length; i++) {
-        const chatId = ids[i];
+    const promises = ids.map((chatId) => {
         const chatBDays = group[chatId];
-
         if (chatBDays.length > 0) {
-            // eslint-disable-next-line no-await-in-loop
-            await bot.telegram.sendMessage(
+            return bot.telegram.sendMessage(
                 chatId,
                 prepareBdaysReply(chatBDays, 'Hey the are a some birthdays on this week'),
                 { parse_mode: 'HTML' },
             );
         }
-    }
+        return Promise.resolve();
+    });
 
-    return { statusCode: 200 };
+    return Promise.all(promises);
 };
+
+export default everyweek;
