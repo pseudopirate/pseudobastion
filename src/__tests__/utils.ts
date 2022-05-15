@@ -1,4 +1,4 @@
-const { pad, prepareBdaysReply, getDayDiff } = require('../utils')
+import { pad, prepareBdaysReply, getDayDiff } from '../utils';
 
 describe('utils cases:', () => {
     describe('pad: (str: string) => string', () => {
