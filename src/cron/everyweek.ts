@@ -1,9 +1,9 @@
 import AWS from 'aws-sdk';
 
 import _ from 'lodash';
-import { bot } from '../bot';
 import { BDay } from '../models';
-import { prepareBdaysReply, getDayDiff, pad } from '../utils';
+import { getDayDiff, pad } from '../utils';
+import { sendMessages } from './utils';
 
 AWS.config.update({
     region: process.env.AWS_REGION,
@@ -33,22 +33,7 @@ const everyweek = async () => {
         })
         .filter(({ diff }) => diff >= 0 && diff < 7);
 
-    const group = _.groupBy(bdays, 'chat_id');
-    const ids = Object.keys(group);
-
-    const promises = ids.map((chatId) => {
-        const chatBDays = group[chatId];
-        if (chatBDays.length > 0) {
-            return bot.telegram.sendMessage(
-                chatId,
-                prepareBdaysReply(chatBDays, 'Hey the are a some birthdays on this week'),
-                { parse_mode: 'HTML' },
-            );
-        }
-        return Promise.resolve();
-    });
-
-    return Promise.all(promises);
+    return sendMessages(bdays, 'Hey the are a some birthdays on this week');
 };
 
 export default everyweek;

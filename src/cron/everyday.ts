@@ -1,8 +1,7 @@
 import AWS from 'aws-sdk';
 import _ from 'lodash';
-import { bot } from '../bot';
 import { BDay } from '../models';
-import { prepareBdaysReply } from '../utils';
+import { sendMessages } from './utils';
 
 AWS.config.update({
     region: process.env.AWS_REGION,
@@ -23,24 +22,9 @@ const everyday = async () => {
     const { Items } = await client.scan(params).promise();
     const bdays = _.orderBy(Items as BDay[], ['month', 'day']);
 
-    const group = _.groupBy(bdays, 'chat_id');
-    const ids = Object.keys(group);
+    console.log(bdays);
 
-    const promises = ids.map((chatId) => {
-        const chatBDays = group[chatId];
-
-        if (chatBDays.length > 0) {
-            return bot.telegram.sendMessage(
-                chatId,
-                prepareBdaysReply(chatBDays, "Hey, someone has birthday today! Don't forget to wish him happy birthday"),
-                { parse_mode: 'HTML' },
-            );
-        }
-
-        return Promise.resolve();
-    });
-
-    return Promise.all(promises);
+    return sendMessages(bdays as BDay[], "Hey, someone has birthday today! Don't forget to wish him happy birthday");
 };
 
 export default everyday;

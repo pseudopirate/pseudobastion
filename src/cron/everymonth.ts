@@ -1,8 +1,7 @@
 import AWS from 'aws-sdk';
 import _ from 'lodash';
-import { bot } from '../bot';
 import { BDay } from '../models';
-import { prepareBdaysReply } from '../utils';
+import { sendMessages } from './utils';
 
 AWS.config.update({
     region: process.env.AWS_REGION,
@@ -23,24 +22,7 @@ const everymonth = async () => {
     const { Items } = await client.scan(params).promise();
     const bdays = _.orderBy(Items as BDay[], ['month', 'day']);
 
-    const group = _.groupBy(bdays, 'chat_id');
-    const ids = Object.keys(group);
-
-    const promises = ids.map(async (chatId) => {
-        const chatBDays = group[chatId];
-
-        if (chatBDays.length > 0) {
-            return bot.telegram.sendMessage(
-                chatId,
-                prepareBdaysReply(chatBDays, 'There are some birthdays in this month'),
-                { parse_mode: 'HTML' },
-            );
-        }
-
-        return Promise.resolve();
-    });
-
-    return Promise.all(promises);
+    return sendMessages(bdays, 'There are some birthdays in this month');
 };
 
 export default everymonth;
