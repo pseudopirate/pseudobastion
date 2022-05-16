@@ -16,7 +16,7 @@ export const putBday = async (bday: BDay, chat_id: string) => {
         TableName: 'birthdays',
         Item: {
             ...bday,
-            chat_id,
+            chat_id, // eslint-disable-line camelcase
             created_at: Date.now(),
         },
     };

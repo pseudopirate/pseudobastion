@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src",
-    "lint": "eslint src --fix",
+    "lint": "eslint ./src/**/*.ts --fix --quiet",
     "prepare": "husky install",
     "start": "node src/index.js",
     "test": "jest",

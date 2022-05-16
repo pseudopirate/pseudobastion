@@ -4,7 +4,7 @@ import {
 import AWS from 'aws-sdk';
 import { telegrafThrottler } from 'telegraf-throttler';
 import _ from 'lodash';
-import { Update } from 'telegraf/typings/core/types/typegram';
+import { Update } from 'telegraf/src/core/types/typegram';
 import { getChatId, prepareBdaysReply } from '../utils';
 import { bdaysScene } from './scenes';
 import { bdaysKeyboard, BDAYS_ACTIONS, commandDescriptions } from './consts';
